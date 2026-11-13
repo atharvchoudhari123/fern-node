@@ -1,12 +1,17 @@
 {
   "name": "fern-node",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check ginakj.js"
+    "dev": "node --watch server.js",
+    "check": "node --check app.js && node --check server.js && node --check api/index.js && node --check ginakj.js"
   },
-  "dependencies": { "express": "^5.1.0" }
+  "dependencies": {
+    "express": "^5.1.0"
+  }
 }
