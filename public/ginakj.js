@@ -1,118 +1,98 @@
-const swBase = self.location.pathname.replace(/ginakj\.js$/, '')
+// Fern service worker: Scramjet-only request routing.
+const swBase = self.location.pathname.replace(/ginakj\.js$/, '');
 
-importScripts(swBase + 'assets/djm/zhfh.bundle.js')
-importScripts(swBase + 'assets/djm/zhfh.config.js')
-importScripts(__uv$config.sw || swBase + 'assets/djm/zhfh.sw.js')
+// This bundle contains the shared browser transport used by the existing
+// Scramjet frontend. Ultraviolet is deliberately not initialized here.
+importScripts(swBase + 'assets/djm/zhfh.bundle.js');
+importScripts(swBase + 'xttc/eakd.all.js');
 
-importScripts(swBase + 'xttc/eakd.all.js')
+let scramjet = null;
+let scramjetInitialized = false;
+let initializationPromise = null;
 
-const uv = new UVServiceWorker()
+self.addEventListener('install', () => self.skipWaiting());
 
-let scramjet = null
-let scramjetInitialized = false
-
-self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', (event) => {
-	event.waitUntil(self.clients.claim())
-})
+  event.waitUntil(self.clients.claim());
+});
 
 async function getScramjet() {
-	if (!scramjet) {
-		const { ScramjetServiceWorker } = $scramjetLoadWorker()
-		scramjet = new ScramjetServiceWorker()
-	}
-	return scramjet
+  if (!scramjet) {
+    const { ScramjetServiceWorker } = $scramjetLoadWorker();
+    scramjet = new ScramjetServiceWorker();
+  }
+  return scramjet;
+}
+
+async function initializeScramjet() {
+  if (scramjetInitialized) return;
+  if (!initializationPromise) {
+    initializationPromise = (async () => {
+      const engine = await getScramjet();
+      await engine.loadConfig();
+      scramjetInitialized = true;
+    })().finally(() => {
+      if (!scramjetInitialized) initializationPromise = null;
+    });
+  }
+  await initializationPromise;
 }
 
 async function handleScramjetRequest(event) {
-	try {
-		const s = await getScramjet()
-		if (!scramjetInitialized) {
-			try {
-				await s.loadConfig()
-				scramjetInitialized = true
-			} catch (e) {
-				return new Response(
-					`
-					<!DOCTYPE html>
-					<html>
-					<head>
-						<meta http-equiv="refresh" content="0.5">
-						<style>
-							body { font-family: system-ui; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #1a1a1a; color: #fff; }
-							.loader { text-align: center; }
-							.spinner { border: 3px solid #333; border-top: 3px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-							@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-						</style>
-					</head>
-					<body>
-						<div class="loader">
-							<div class="spinner"></div>
-						<p>Initializing content handler...</p>
-						</div>
-					</body>
-					</html>
-				`,
-					{
-						status: 200,
-						headers: { 'Content-Type': 'text/html' }
-					}
-				)
-			}
-		}
-		if (s.route(event)) {
-			return await s.fetch(event)
-		}
-	} catch (e) {
-		return new Response('Request handler error: ' + e.message, { status: 500 })
-	}
-	return await fetch(event.request)
+  try {
+    const engine = await getScramjet();
+    await initializeScramjet();
+
+    if (engine.route(event)) {
+      return await engine.fetch(event);
+    }
+    return fetch(event.request);
+  } catch (error) {
+    console.error('Scramjet request failed:', error);
+    return new Response('Scramjet could not handle this request. Check the engine configuration and worker assets.', {
+      status: 502,
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+    });
+  }
 }
 
 self.addEventListener('fetch', (event) => {
-	const url = new URL(event.request.url)
+  const url = new URL(event.request.url);
+  if (url.origin === self.location.origin && url.pathname.startsWith(swBase + 'gqqn/')) {
+    event.respondWith(handleScramjetRequest(event));
+  }
+});
 
-	if (url.pathname.startsWith(swBase + 'gqqn/')) {
-		event.respondWith(handleScramjetRequest(event))
-		return
-	}
+// Web Push (community chat notifications).
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data.json();
+  } catch {}
 
-	if (uv.route(event)) {
-		event.respondWith(uv.fetch(event))
-		return
-	}
-})
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Fern', {
+      body: data.body || '',
+      icon: data.icon,
+      data: { url: data.url || '/chat' },
+      tag: data.tag
+    })
+  );
+});
 
-// ── Web Push (community chat notifications) ──
-self.addEventListener('push', (e) => {
-	let d = {}
-	try {
-		d = e.data.json()
-	} catch {}
-	e.waitUntil(
-		self.registration.showNotification(d.title || '\x46\x65\x72\x6e', {
-			body: d.body || '',
-			icon: d.icon,
-			data: { url: d.url || '/chat' },
-			tag: d.tag
-		})
-	)
-})
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = (event.notification.data && event.notification.data.url) || '/chat';
 
-self.addEventListener('notificationclick', (e) => {
-	e.notification.close()
-	const url = (e.notification.data && e.notification.data.url) || '/chat'
-	e.waitUntil(
-		self.clients
-			.matchAll({ type: 'window', includeUncontrolled: true })
-			.then((cs) => {
-				for (const c of cs) {
-					if ('focus' in c) {
-						c.navigate && c.navigate(url)
-						return c.focus()
-					}
-				}
-				return self.clients.openWindow(url)
-			})
-	)
-})
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if ('focus' in client) {
+          if (client.navigate) client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
+});
