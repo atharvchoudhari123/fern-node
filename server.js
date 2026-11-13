@@ -9,7 +9,6 @@ const PORT = Number(process.env.PORT) || 3000;
 
 app.disable("x-powered-by");
 app.get("/healthz", (_req, res) => res.json({ ok: true, service: "fern-node" }));
-app.get("/", (_req, res) => res.redirect(302, "/search"));
 
 app.use(express.static(__dirname, {
   index: false,
