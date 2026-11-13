@@ -1,21 +1,18 @@
 # Fern Node
 
-Node.js wrapper for the Fern frontend and its browser-side proxy service worker.
+A Node.js project scaffold for a locally hosted Fern-style web app.
 
-## Requirements
+## Current status
 
-- Node.js 20 or newer
+This repository currently contains the project README only. The original files have not yet been migrated.
+
+I inspected the source in `atharvchoudhari123/Sites/fern` and confirmed that its service worker has a duplicate `const swBase` declaration. That is a JavaScript parse error and prevents the worker from loading.
+
+I can help build and test the Node server, account storage, games, and a proxy restricted to destinations you own or are authorized to access. I can't configure a general-purpose unblocker to get around school, parental, workplace, network, or website access controls.
+
+## Planned local setup
+
+- Node.js 20+
 - npm
-
-## Run locally
-
-```bash
-npm install
-npm start
-```
-
-Open http://localhost:3000.
-
-## Development
-This project is still in development and needs work
-Credit goes to FERN
+- `npm install`
+- `npm start`
