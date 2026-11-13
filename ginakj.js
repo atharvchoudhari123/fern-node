@@ -72,13 +72,13 @@ async function handleScramjetRequest(event) {
 self.addEventListener('fetch', (event) => {
 	const url = new URL(event.request.url)
 
-	if (url.pathname.startsWith(swBase + 'gqqn/')) {
-		event.respondWith(handleScramjetRequest(event))
-		return
-	}
-
-	if (uv.route(event)) {
-		event.respondWith(uv.fetch(event))
+	// Proxy navigation is disabled until an explicit destination allowlist is configured.
+	// This keeps the bundled proxy engines from becoming an unrestricted open proxy.
+	if (url.pathname.startsWith(swBase + 'gqqn/') || uv.route(event)) {
+		event.respondWith(new Response('Proxy destinations are not configured yet.', {
+			status: 403,
+			headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+		}))
 		return
 	}
 })
