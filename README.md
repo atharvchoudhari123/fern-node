@@ -1,38 +1,49 @@
 # Fern Node
 
-A Node.js web app that serves the Fern interface and its browser assets.
+A Node.js-hosted frontend shell for the Fern project.
 
-## Included
+## Requirements
 
-- Fern web interface
-- Frontend scripts, styles, fonts, and service-worker assets
-- Browser game interface assets
-- Express server for local development
-
-## Getting Started
-
-### Requirements
-
-- Node.js 20 or later
+- Node.js 20 or newer
 - npm
 
-### Installation
+## Run locally
 
 ```bash
-git clone https://github.com/atharvchoudhari123/fern-node.git
-cd fern-node
 npm install
+npm run check
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open http://localhost:3000.
 
-## Project Structure
+## Deployment
 
-- `assets/` — Frontend scripts, styles, and fonts
-- `xttc/` — Browser runtime assets
-- `fern.html` — Web app entry point
-- `ginakj.js` — Service worker
-- `server.js` — Express server
+### Standard Node host
 
-Proxy navigation is not enabled until a destination allowlist is configured.
+Deploy this repository to a host that runs a persistent Node.js process (for example, a Node service on Render, Railway, or your own server).
+
+- Build/install command: `npm install`
+- Start command: `npm start`
+- Health check: `/healthz`
+- Set `NODE_ENV=production`
+
+The server binds to `0.0.0.0` and uses the host-provided `PORT`.
+
+### Vercel
+
+The included `vercel.json` routes requests through the Express handler in `api/index.js`. This is suitable for serving the frontend and static files. Vercel Functions are not a persistent WebSocket host; any separate realtime transport must run on a host that supports long-lived WebSocket connections.
+
+## Static asset behavior
+
+Only the expected public asset directories are served. Missing JavaScript, module, worker, CSS, and WASM files return HTTP 404 instead of the HTML application shell. This makes missing runtime files easier to diagnose and prevents browser errors caused by parsing HTML as JavaScript.
+
+## Proxy/runtime status
+
+The current repository still needs the matching Scramjet worker and transport module before the browser runtime can initialize. The Fern network capture supplied for inspection did not include those files. Do not mix Scramjet/Bare-Mux generations or copy a worker from a different version.
+
+Proxy destinations should be restricted to domains you own or are authorized to test. This repository does not claim to provide unrestricted access to arbitrary websites.
+
+## Ads
+
+The Node host does not inject advertising scripts. This does not remove advertisements served by third-party websites that are opened inside an embedded browser.
