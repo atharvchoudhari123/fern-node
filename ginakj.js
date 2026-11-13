@@ -1,6 +1,6 @@
 // Fern service worker: Scramjet-only request routing with a configurable
 // destination blocklist. The policy is served by the Node app from .env.
-const swBase = self.location.pathname.replace(/ginakj\\.js$/, '');
+const swBase = self.location.pathname.replace(/ginakj\.js$/, '');
 
 importScripts(swBase + 'assets/djm/zhfh.bundle.js');
 importScripts(swBase + 'xttc/eakd.all.js');
