@@ -1,13 +1,13 @@
 # Fern Node
 
-A web app built with Node.js, bringing the Fern interface and browser tools together in one project.
+A Node.js web app that serves the Fern interface and its browser assets.
 
-## Features
+## Included
 
-- Web-based interface
-- Browser games
-- User accounts
-- Node.js server
+- Fern web interface
+- Frontend scripts, styles, fonts, and service-worker assets
+- Browser game interface assets
+- Express server for local development
 
 ## Getting Started
 
@@ -25,14 +25,14 @@ npm install
 npm start
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
-- `assets/` — Frontend scripts, styles, and other assets
-- `server.js` — Node.js application server
-- `fern.html` — Web app interface
+- `assets/` — Frontend scripts, styles, and fonts
+- `xttc/` — Browser runtime assets
+- `fern.html` — Web app entry point
+- `ginakj.js` — Service worker
+- `server.js` — Express server
 
-## License
-
-See the project files and included third-party notices for applicable licenses.
+Proxy navigation is not enabled until a destination allowlist is configured.
