@@ -25,6 +25,18 @@
     crossorigin
     src="/assets/glcb-e-jll-QI8b.js">
   </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          await navigator.serviceWorker.register("/ginakj.js", { scope: "/" });
+        } catch (error) {
+          console.error("Fern service worker registration failed:", error);
+        }
+      });
+    }
+  </script>
 </head>
 
 <body>
