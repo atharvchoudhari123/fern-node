@@ -1,18 +1,38 @@
 # Fern Node
 
-A Node.js project scaffold for a locally hosted Fern-style web app.
+A web app built with Node.js, bringing the Fern interface and browser tools together in one project.
 
-## Current status
+## Features
 
-This repository currently contains the project README only. The original files have not yet been migrated.
+- Web-based interface
+- Browser games
+- User accounts
+- Node.js server
 
-I inspected the source in `atharvchoudhari123/Sites/fern` and confirmed that its service worker has a duplicate `const swBase` declaration. That is a JavaScript parse error and prevents the worker from loading.
+## Getting Started
 
-I can help build and test the Node server, account storage, games, and a proxy restricted to destinations you own or are authorized to access. I can't configure a general-purpose unblocker to get around school, parental, workplace, network, or website access controls.
+### Requirements
 
-## Planned local setup
-
-- Node.js 20+
+- Node.js 20 or later
 - npm
-- `npm install`
-- `npm start`
+
+### Installation
+
+```bash
+git clone https://github.com/atharvchoudhari123/fern-node.git
+cd fern-node
+npm install
+npm start
+```
+
+Then open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+- `assets/` — Frontend scripts, styles, and other assets
+- `server.js` — Node.js application server
+- `fern.html` — Web app interface
+
+## License
+
+See the project files and included third-party notices for applicable licenses.
